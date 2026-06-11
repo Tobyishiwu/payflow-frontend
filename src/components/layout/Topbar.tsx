@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getUnreadCount } from "../../services/notificationService";
-import api from "../../services/api";
+//import api from "../../services/api";
 
 const pageTitles: Record<string, string> = {
   "/dashboard": "PayFlow",
@@ -48,17 +48,7 @@ function Topbar() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await api.post("/logout");
-    } catch (e) {
-      console.error(e);
-    } finally {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      navigate("/login");
-    }
-  };
+  
 
   return (
     <header className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-sm">

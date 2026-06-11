@@ -74,8 +74,8 @@ function SupportPage() {
             <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Contact Us</p>
           </div>
 
-          {contactOptions.map((option, idx) => (
-            <div key={option.label} className="border-t border-gray-100">
+{contactOptions.map((option) => (
+              <div key={option.label} className="border-t border-gray-100">
               <a
                 href={option.href}
                 target="_blank"
