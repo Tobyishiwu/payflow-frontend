@@ -28,7 +28,7 @@ const contactOptions = [
   {
     label: "WhatsApp",
     subtitle: "Chat with us instantly",
-    href: "https://wa.me/2347066958826",
+    href: "https://wa.me/2347000000000",
     iconBg: "bg-green-50",
     iconColor: "text-green-600",
     badgeColor: "bg-green-100 text-green-700",
