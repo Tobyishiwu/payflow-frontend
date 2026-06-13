@@ -1,74 +1,51 @@
 import { generateReceipt } from "../../utils/generateReceipt";
 
-interface Transaction {
-  id: number;
-  reference: string;
-  sender_account_id: number;
-  receiver_account_id: number;
-  amount: string;
-  fee: string;
-  type: string;
-  status: string;
-  description: string;
-  created_at: string;
-  updated_at: string;
+interface Tx {
+  id: number; reference: string; sender_account_id: number;
+  receiver_account_id: number; amount: string; fee: string;
+  type: string; status: string; description: string;
+  created_at: string; updated_at: string;
 }
 
-interface Props {
-  transaction: Transaction;
-  accountId: number;
-  onClose: () => void;
-}
+interface Props { transaction: Tx; accountId: number; onClose: () => void; }
 
-function TransactionReceipt({ transaction, accountId, onClose }: Props) {
-  if (!transaction) return null;
-
+export default function TransactionReceipt({ transaction, accountId, onClose }: Props) {
   const isCredit = transaction.receiver_account_id === accountId;
-  const formatted = Number(transaction.amount).toLocaleString("en-NG", { minimumFractionDigits: 2 });
+  const amt = Number(transaction.amount).toLocaleString("en-NG", { minimumFractionDigits: 2 });
   const fee = Number(transaction.fee || 0).toLocaleString("en-NG", { minimumFractionDigits: 2 });
   const date = new Date(transaction.created_at).toLocaleString("en-NG", {
-    weekday: "long", year: "numeric", month: "long",
-    day: "numeric", hour: "2-digit", minute: "2-digit",
+    weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "2-digit", minute: "2-digit"
   });
 
   const rows = [
-    { label: "Transaction Type", value: isCredit ? "Money Received" : "Money Sent" },
+    { label: "Type", value: isCredit ? "Money Received" : "Money Sent" },
     { label: "Description", value: transaction.description || "Transfer" },
     { label: "Reference", value: transaction.reference, mono: true },
     { label: "Fee", value: `₦${fee}` },
-    { label: "Date & Time", value: date },
+    { label: "Date", value: date },
   ];
 
   return (
-    <div
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4"
-      onClick={(e) => e.target === e.currentTarget && onClose()}
-    >
-      <div className="bg-white w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl overflow-hidden shadow-2xl">
-
-        {/* Drag handle */}
-        <div className="flex justify-center pt-3 pb-1 sm:hidden">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end justify-center z-50"
+      onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="bg-white w-full rounded-t-3xl overflow-hidden shadow-2xl">
+        <div className="flex justify-center pt-3 pb-1">
           <div className="w-10 h-1 bg-gray-200 rounded-full" />
         </div>
-
-        {/* Header band */}
-        <div className={`px-6 pt-5 pb-6 text-center ${isCredit ? "bg-emerald-600" : "bg-[#0F2D52]"}`}>
+        {/* Header */}
+        <div className={`px-6 pt-4 pb-6 text-center ${isCredit ? "bg-emerald-600" : "bg-[#0F2D52]"}`}>
           <div className="w-14 h-14 rounded-full bg-white/20 ring-4 ring-white/10 flex items-center justify-center mx-auto mb-3 text-2xl text-white">
             {isCredit ? "↓" : "↑"}
           </div>
           <p className="text-white/70 text-[10px] font-bold uppercase tracking-widest mb-1">{isCredit ? "Received" : "Sent"}</p>
-          <h1 className="text-3xl font-bold text-white">₦{formatted}</h1>
+          <h1 className="text-3xl font-bold text-white">₦{amt}</h1>
         </div>
-
-        {/* Status */}
+        {/* Status pill */}
         <div className="flex justify-center -mt-4 relative z-10">
-          <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide shadow-md ${
-            transaction.status === "completed" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
-          }`}>
+          <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wide shadow-md ${transaction.status === "completed" ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"}`}>
             {transaction.status}
           </span>
         </div>
-
         {/* Rows */}
         <div className="px-6 pt-4 pb-2 divide-y divide-gray-100">
           {rows.map(({ label, value, mono }) => (
@@ -78,32 +55,17 @@ function TransactionReceipt({ transaction, accountId, onClose }: Props) {
             </div>
           ))}
         </div>
-
-        {/* Dashed divider */}
         <div className="mx-6 my-2 border-t-2 border-dashed border-gray-200" />
-
-        {/* Footer */}
-        <div className="px-6 pb-8 pt-3 flex gap-3">
-          <button
-            onClick={() => generateReceipt(transaction)}
-            className="flex-1 border-2 border-[#0F2D52] text-[#0F2D52] py-3.5 rounded-2xl font-semibold text-sm hover:bg-slate-50 transition flex items-center justify-center gap-2"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
-            </svg>
+        {/* Actions */}
+        <div className="px-6 pb-10 pt-3 flex gap-3">
+          <button onClick={() => generateReceipt(transaction)}
+            className="flex-1 border-2 border-[#0F2D52] text-[#0F2D52] py-3.5 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4"/></svg>
             Download
           </button>
-          <button
-            onClick={onClose}
-            className="flex-1 bg-[#0F2D52] text-white py-3.5 rounded-2xl font-semibold text-sm hover:bg-[#163b6b] transition"
-          >
-            Close
-          </button>
+          <button onClick={onClose} className="flex-1 bg-[#0F2D52] text-white py-3.5 rounded-2xl font-semibold text-sm">Close</button>
         </div>
-
       </div>
     </div>
   );
 }
-
-export default TransactionReceipt;
